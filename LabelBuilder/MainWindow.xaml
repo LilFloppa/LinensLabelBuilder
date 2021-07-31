@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LabelBuilder"
+        xmlns:models="clr-namespace:LabelBuilder.Models"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Window.Resources>
-        <DataTemplate x:Key="BitmapSpecsPairTemplate" DataType="{x:Type local:BitmapSpecsPair}">
+        <DataTemplate x:Key="ContentSpecTemplate" DataType="{x:Type models:ContentSpec}">
             <Border BorderThickness="0 0 0 1" BorderBrush="Black" Margin="0,0,0,5" Padding="0,0,0,2">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -22,8 +23,8 @@
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Название:" FontSize="16" />
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер:" FontSize="16"/>
 
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{ Binding Path=Specs.Name }" FontSize="16"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{ Binding Path=Specs.Size }" FontSize="16"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{ Binding Path=Name }" FontSize="16"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{ Binding Path=Size }" FontSize="16"/>
                 </Grid>
             </Border>
         </DataTemplate>
@@ -44,51 +45,53 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <GroupBox Grid.Column="0" Header="Параметры" FontSize="20">
+            <GroupBox Grid.Column="0" Header="Параметры постельного белья" FontSize="20">
                 <StackPanel HorizontalAlignment="Stretch">
                     <TextBlock Text="Название" FontSize="20"/>
                     <TextBox Margin="0,0,0,10" MinHeight="30" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Text="Размер" FontSize="20" />
-                    <ComboBox Margin="0,0,0,10" MinHeight="30" ItemsSource="{ Binding Sizes }" SelectedItem="{ Binding Size }"/>
-                    <Grid Margin="0,0,0,2">
+                    <ComboBox Margin="0,0,0,10" MinHeight="30" ItemsSource="{ x:Static models:SizesHelper.BedSizes }" SelectedItem="{ Binding Size }"/>
+
+                    <Grid Margin="0,0,0,10" HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"></ColumnDefinition>
-                            <ColumnDefinition Width="auto"></ColumnDefinition>
-                            <ColumnDefinition Width="auto"></ColumnDefinition>
-                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Размер пододеяльника:" Margin="0,0,5,0" FontSize="20"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" MinWidth="40"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0" VerticalAlignment="Stretch" FontStyle="Normal" TextDecorations="{x:Null}"/>
-                        <TextBox Grid.Row="0" Grid.Column="3" MinWidth="40" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер простыни:" Margin="0,0,5,0" FontSize="20"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="40"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0"/>
-                        <TextBox Grid.Row="1" Grid.Column="3" MinWidth="40" />
-
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Размер наволочки:" Margin="0,0,5,0" FontSize="20"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" MinWidth="40"/>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0"/>
-                        <TextBox Grid.Row="2" Grid.Column="3" MinWidth="40" />
+                        <TextBlock Grid.Column="0" Text="Простынь на резинке:" Margin="0,0,10,0"/>
+                        <CheckBox x:Name="HasElasticBedsheetCheckBox" Grid.Column="1" IsChecked="{ Binding HasElasticBedsheet }" VerticalAlignment="Center" HorizontalAlignment="Left" RenderTransformOrigin="1,1" Checked="HasElasticBedsheetCheckBox_Checked" Click="HasElasticBedsheetCheckBox_Click">
+                            <CheckBox.LayoutTransform>
+                                <ScaleTransform ScaleX="2" ScaleY="2" />
+                            </CheckBox.LayoutTransform>
+                        </CheckBox>
                     </Grid>
 
-                    <TextBlock Text="Ткань" FontSize="20" />
+                    <TextBlock x:Name="ElasticBedsheetWidthLabel" Text="Ширина простыни на резинке" FontSize="20" />
+                    <ComboBox x:Name ="ElasticBedsheetWidthComboBox" Margin="0,0,0,10" MinHeight="30" 
+                              ItemsSource="{ x:Static models:SizesHelper.ElasticBedsheetWidth }" 
+                              SelectedItem="{ Binding ElasticBedsheetWidth }" 
+                              Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked }" />
+                   
+                    <TextBlock Text="Ткань" FontSize="20" Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked }"/>
                     <TextBox Margin="0,0,0,10" MinHeight="30"/>
 
                     <TextBlock Text="Цена" FontSize="20" />
-                    <TextBox Margin="0,0,0,10" MinHeight="30"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Margin="0,0,10,10" MinHeight="30" HorizontalAlignment="Stretch"/>
+                        <TextBlock Grid.Column="1" Text="руб."/>
+                    </Grid>
+
+                    <Button Command="{ Binding AddSpec }">Добавить</Button>
                 </StackPanel>
             </GroupBox>
             <StackPanel Grid.Column="1" Orientation="Vertical">
-                <ListBox x:Name="SpecsListBox" HorizontalContentAlignment="Stretch" ItemsSource="{ Binding BitmapSpecsPairs }" ItemTemplate="{ StaticResource BitmapSpecsPairTemplate }" SelectionMode="Multiple" />
-                <Button Command="{ Binding Build }">Build</Button>
-                <Button Command="{ Binding DeleteSelectedSpec }">Delete</Button>
+                <ListBox x:Name="SpecsListBox" HorizontalContentAlignment="Stretch" ItemsSource="{ Binding ContentSpecs }" ItemTemplate="{ StaticResource ContentSpecTemplate }" SelectionMode="Multiple" />
+                
+                <Button Command="{ Binding DeleteSelectedSpecs }">Delete</Button>
             </StackPanel>
         </Grid>
     </DockPanel>
