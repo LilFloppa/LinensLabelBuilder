@@ -11,10 +11,10 @@ namespace LabelBuilder.Models
 		public string Name { get; set; }
 		public string Size { get; set; }
 		public string ClothName { get; set; }
-		public int Price { get; set; }
+		public string Price { get; set; }
 
 		public bool HasElasticBedsheet { get; set; }
-		public int ElasticBedsheetWidth { get; set; }
+		public string ElasticBedsheetWidth { get; set; }
 	}
 
 	public class FormatSpecs
@@ -34,7 +34,7 @@ namespace LabelBuilder.Models
 		{
 			Window = window;
 
-			FormatSpecs = new FormatSpecs { FontSize = 24, Margin = 20, SizesOffset = 300 };
+			FormatSpecs = new FormatSpecs { FontSize = 24, Margin = 20, SizesOffset = 240 };
 		}
 
 		private FormattedText PrepareText(string text, string font, int size)

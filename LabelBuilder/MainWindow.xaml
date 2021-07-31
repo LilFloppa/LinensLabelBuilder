@@ -5,11 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LabelBuilder"
         xmlns:models="clr-namespace:LabelBuilder.Models"
+        xmlns:converters="clr-namespace:LabelBuilder.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
+        Title="MainWindow" Height="550" Width="800">
     <Window.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:IntToStringConverter x:Key="IntToStringConverter" />
+
         <DataTemplate x:Key="ContentSpecTemplate" DataType="{x:Type models:ContentSpec}">
-            <Border BorderThickness="0 0 0 1" BorderBrush="Black" Margin="0,0,0,5" Padding="0,0,0,2">
+            <Border BorderThickness="1 1 1 1" BorderBrush="Black" Margin="0,2,0,2" Padding="5,5,5,5">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.5*"/>
@@ -18,13 +22,26 @@
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Название:" FontSize="16" />
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер:" FontSize="16"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Название: " FontSize="16" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер: " FontSize="16"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Простынь на резинке: " FontSize="16"
+                               Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource BooleanToVisibilityConverter }}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Ткань: " FontSize="16"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Цена: " FontSize="16"/>
 
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{ Binding Path=Name }" FontSize="16"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{ Binding Path=Size }" FontSize="16"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{ Binding Name }" FontSize="16"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{ Binding Size }" FontSize="16"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" FontSize="16">
+                        <Run Text="{ Binding ElasticBedsheetWidth }" />
+                        <Run Text=" x 200" />
+                    </TextBlock>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{ Binding ClothName }" FontSize="16"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{ Binding Price, Converter={ StaticResource IntToStringConverter }}" FontSize="16"/>
                 </Grid>
             </Border>
         </DataTemplate>
@@ -59,21 +76,22 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Простынь на резинке:" Margin="0,0,10,0"/>
-                        <CheckBox x:Name="HasElasticBedsheetCheckBox" Grid.Column="1" IsChecked="{ Binding HasElasticBedsheet }" VerticalAlignment="Center" HorizontalAlignment="Left" RenderTransformOrigin="1,1" Checked="HasElasticBedsheetCheckBox_Checked" Click="HasElasticBedsheetCheckBox_Click">
+                        <CheckBox x:Name="HasElasticBedsheetCheckBox" Grid.Column="1" IsChecked="{ Binding HasElasticBedsheet }" VerticalAlignment="Center" HorizontalAlignment="Left">
                             <CheckBox.LayoutTransform>
                                 <ScaleTransform ScaleX="2" ScaleY="2" />
                             </CheckBox.LayoutTransform>
                         </CheckBox>
                     </Grid>
 
-                    <TextBlock x:Name="ElasticBedsheetWidthLabel" Text="Ширина простыни на резинке" FontSize="20" />
+                    <TextBlock x:Name="ElasticBedsheetWidthLabel" Text="Ширина простыни на резинке" FontSize="20" 
+                               Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BooleanToVisibilityConverter } }"/>
                     <ComboBox x:Name ="ElasticBedsheetWidthComboBox" Margin="0,0,0,10" MinHeight="30" 
                               ItemsSource="{ x:Static models:SizesHelper.ElasticBedsheetWidth }" 
                               SelectedItem="{ Binding ElasticBedsheetWidth }" 
-                              Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked }" />
+                              Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BooleanToVisibilityConverter } }" />
                    
-                    <TextBlock Text="Ткань" FontSize="20" Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked }"/>
-                    <TextBox Margin="0,0,0,10" MinHeight="30"/>
+                    <TextBlock Text="Ткань" FontSize="20" />
+                    <TextBox Margin="0,0,0,10" MinHeight="30" Text="{ Binding ClothName, UpdateSourceTrigger=PropertyChanged }"/>
 
                     <TextBlock Text="Цена" FontSize="20" />
                     <Grid>
@@ -81,17 +99,17 @@
                             <ColumnDefinition />
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Margin="0,0,10,10" MinHeight="30" HorizontalAlignment="Stretch"/>
+                        <TextBox Grid.Column="0" Margin="0,0,10,10" MinHeight="30" HorizontalAlignment="Stretch" Text="{ Binding Price, UpdateSourceTrigger=PropertyChanged }"/>
                         <TextBlock Grid.Column="1" Text="руб."/>
                     </Grid>
 
-                    <Button Command="{ Binding AddSpec }">Добавить</Button>
+                    <Button Command="{ Binding AddSpec }" FontSize="20">Добавить</Button>
                 </StackPanel>
             </GroupBox>
             <StackPanel Grid.Column="1" Orientation="Vertical">
                 <ListBox x:Name="SpecsListBox" HorizontalContentAlignment="Stretch" ItemsSource="{ Binding ContentSpecs }" ItemTemplate="{ StaticResource ContentSpecTemplate }" SelectionMode="Multiple" />
-                
-                <Button Command="{ Binding DeleteSelectedSpecs }">Delete</Button>
+
+                <Button Command="{ Binding DeleteSelectedSpecs }" FontSize="20">Удалить выбранные</Button>
             </StackPanel>
         </Grid>
     </DockPanel>

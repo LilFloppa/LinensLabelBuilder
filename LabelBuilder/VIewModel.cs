@@ -37,7 +37,16 @@ namespace LabelBuilder
 		public string Price { get => _price; set => this.RaiseAndSetIfChanged(ref _price, value); }
 		private string _price;
 
-		public ContentSpec CurrentContentSpec => new ContentSpec { Name = Name, Size = Size };
+		public ContentSpec CurrentContentSpec => 
+			new ContentSpec 
+			{ 
+				Name = Name, 
+				Size = Size, 
+				ClothName = ClothName,
+				Price = Price,
+				HasElasticBedsheet = HasElasticBedsheet,
+				ElasticBedsheetWidth = ElasticBedsheetWidth
+			};
 
 		public ReactiveCommand<Unit, Unit> AddSpec { get; set; }
 		public ReactiveCommand<Unit, Unit> DeleteSelectedSpecs { get; set; }
@@ -52,7 +61,14 @@ namespace LabelBuilder
 			FormatViewModel = new FormatViewModel(this);
 			ContentSpecs = Model.ContentSpecs;
 
-			AddSpec = ReactiveCommand.Create(() => Model.ContentSpecs.Add(CurrentContentSpec));
+			var addSpecCanExecute = this.WhenAnyValue(
+				vm => vm.Name, 
+				vm => vm.Size, 
+				vm => vm.ClothName, 
+				vm => vm.Price, 
+				(name, size, clothName, price) => name != "" && size != "" && clothName != "" && int.TryParse(price, out _));
+
+			AddSpec = ReactiveCommand.Create(() => Model.ContentSpecs.Add(CurrentContentSpec), addSpecCanExecute);
 
 			DeleteSelectedSpecs = ReactiveCommand.Create(() =>
 			{
@@ -122,6 +138,6 @@ namespace LabelBuilder
 
 		public ReactiveCommand<Unit, Unit> SetSpecs { get; set; }
 
-		private bool ValidateField(string numberString) => int.TryParse(numberString, out int _);
+		private bool ValidateField(string numberString) => int.TryParse(numberString, out _);
 	}
 }
