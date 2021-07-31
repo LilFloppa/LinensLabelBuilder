@@ -9,76 +9,87 @@
     <Window.Resources>
         <DataTemplate x:Key="BitmapSpecsPairTemplate" DataType="{x:Type local:BitmapSpecsPair}">
             <Border BorderThickness="0 0 0 1" BorderBrush="Black" Margin="0,0,0,5" Padding="0,0,0,2">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*"/>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Название:" FontSize="16" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер:" FontSize="16"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Название:" FontSize="16" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер:" FontSize="16"/>
 
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{ Binding Path=Specs.Name }" FontSize="16"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{ Binding Path=Specs.Size }" FontSize="16"/>
-            </Grid>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{ Binding Path=Specs.Name }" FontSize="16"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{ Binding Path=Specs.Size }" FontSize="16"/>
+                </Grid>
             </Border>
         </DataTemplate>
     </Window.Resources>
-    
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <GroupBox Grid.Column="0" Header="Параметры" FontSize="20">
-            <StackPanel HorizontalAlignment="Stretch">
-                <TextBlock Text="Название" FontSize="20"/>
-                <TextBox Margin="0,0,0,10" MinHeight="30" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock Text="Размер" FontSize="20" />
-                <ComboBox Margin="0,0,0,10" MinHeight="30" ItemsSource="{ Binding Sizes }" SelectedItem="{ Binding Size }"/>
-                <Grid Margin="0,0,0,2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                        <ColumnDefinition Width="auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Размер пододеяльника:" Margin="0,0,5,0" FontSize="20"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" MinWidth="40"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0" VerticalAlignment="Stretch" FontStyle="Normal" TextDecorations="{x:Null}"/>
-                    <TextBox Grid.Row="0" Grid.Column="3" MinWidth="40" />
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер простыни:" Margin="0,0,5,0" FontSize="20"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" MinWidth="40"/>
-                    <TextBlock Grid.Row="1" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0"/>
-                    <TextBox Grid.Row="1" Grid.Column="3" MinWidth="40" />
+    <DockPanel>
+        <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1" BorderBrush="Black">
+            <Menu>
+                <MenuItem Header="Файл" FontSize="16">
+                    <MenuItem Header="Выход" Command="{ Binding Exit }" FontSize="16"/>
+                </MenuItem>
+                <MenuItem Header="Формат" Command="{ Binding Format }" FontSize="16"/>
+                <MenuItem Header="Печать" Command="{ Binding Print }" FontSize="16" />
+            </Menu>
+        </Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0" Header="Параметры" FontSize="20">
+                <StackPanel HorizontalAlignment="Stretch">
+                    <TextBlock Text="Название" FontSize="20"/>
+                    <TextBox Margin="0,0,0,10" MinHeight="30" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="Размер" FontSize="20" />
+                    <ComboBox Margin="0,0,0,10" MinHeight="30" ItemsSource="{ Binding Sizes }" SelectedItem="{ Binding Size }"/>
+                    <Grid Margin="0,0,0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Размер пододеяльника:" Margin="0,0,5,0" FontSize="20"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" MinWidth="40"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0" VerticalAlignment="Stretch" FontStyle="Normal" TextDecorations="{x:Null}"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" MinWidth="40" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Размер наволочки:" Margin="0,0,5,0" FontSize="20"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" MinWidth="40"/>
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0"/>
-                    <TextBox Grid.Row="2" Grid.Column="3" MinWidth="40" />
-                </Grid>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер простыни:" Margin="0,0,5,0" FontSize="20"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="40"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0"/>
+                        <TextBox Grid.Row="1" Grid.Column="3" MinWidth="40" />
 
-                <TextBlock Text="Ткань" FontSize="20" />
-                <TextBox Margin="0,0,0,10" MinHeight="30"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Размер наволочки:" Margin="0,0,5,0" FontSize="20"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" MinWidth="40"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="x" FontSize="20" Margin="10,0,10,0"/>
+                        <TextBox Grid.Row="2" Grid.Column="3" MinWidth="40" />
+                    </Grid>
 
-                <TextBlock Text="Цена" FontSize="20" />
-                <TextBox Margin="0,0,0,10" MinHeight="30"/>
+                    <TextBlock Text="Ткань" FontSize="20" />
+                    <TextBox Margin="0,0,0,10" MinHeight="30"/>
+
+                    <TextBlock Text="Цена" FontSize="20" />
+                    <TextBox Margin="0,0,0,10" MinHeight="30"/>
+                </StackPanel>
+            </GroupBox>
+            <StackPanel Grid.Column="1" Orientation="Vertical">
+                <ListBox x:Name="SpecsListBox" HorizontalContentAlignment="Stretch" ItemsSource="{ Binding BitmapSpecsPairs }" ItemTemplate="{ StaticResource BitmapSpecsPairTemplate }" SelectionMode="Multiple" />
+                <Button Command="{ Binding Build }">Build</Button>
+                <Button Command="{ Binding DeleteSelectedSpec }">Delete</Button>
             </StackPanel>
-        </GroupBox>
-        <StackPanel Grid.Column="1" Orientation="Vertical">
-            <ListBox x:Name="SpecsListBox" HorizontalContentAlignment="Stretch" ItemsSource="{ Binding BitmapSpecsPairs }" ItemTemplate="{ StaticResource BitmapSpecsPairTemplate }" SelectionMode="Multiple" />
-            <Button Command="{ Binding Build }">Build</Button>
-            <Button Command="{ Binding DeleteSelectedSpec }">Delete</Button>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </DockPanel>
 </Window>

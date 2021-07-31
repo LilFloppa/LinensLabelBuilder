@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -19,17 +17,26 @@ namespace LabelBuilder
 		public int Price { get; set; }
 	}
 
+	public class FormatSpecs
+	{
+		public int FontSize { get; set; }
+		public int Margin { get; set; }
+		public int SizesOffset { get; set; }
+	}
+
 	public class BitmapSpecsPair
 	{
-		public RenderTargetBitmap Bitmap { get; set; }
+		public DrawingVisual Bitmap { get; set; }
 		public ContentSpecs Specs { get; set; }
 	}
 
 	public class Model
 	{
+
+		public FormatSpecs FormatSpecs { get; set; }
 		public MainWindow Window { get; set; }
 
-		public ObservableCollection<BitmapSpecsPair> BitmapSpecsPairs = new();
+		public readonly ObservableCollection<BitmapSpecsPair> BitmapSpecsPairs = new();
 
 		public Model(MainWindow window)
 		{
@@ -59,19 +66,22 @@ namespace LabelBuilder
 			group.Children.Add(geometry);
 		}
 
-		public void EndDraw(GeometryGroup group, RenderTargetBitmap bitmap)
+		public DrawingVisual EndDraw(GeometryGroup group)
 		{
 			DrawingVisual visual = new();
 			using (DrawingContext dc = visual.RenderOpen())
 				dc.DrawGeometry(Brushes.Black, new Pen(Brushes.Black, 1.0), group);
 
-			bitmap.Render(visual);
+			return visual;
 		}
 
-		public void BuildImage(ContentSpecs specs)
+		public void AddContentSpecs(ContentSpecs specs)
 		{
-			RenderTargetBitmap bitmap = new RenderTargetBitmap(550, 300, 96, 96, PixelFormats.Pbgra32);
+			BitmapSpecsPairs.Add(new BitmapSpecsPair { Specs = specs, Bitmap = null });
+		}
 
+		public void BuildImage(ContentSpecs contentSpecs)
+		{
 			var group = BeginDraw();
 
 			double yOffset = 0.0;
@@ -83,7 +93,7 @@ namespace LabelBuilder
 			DrawText(group, text, 0.0, yOffset);
 
 			yOffset += text.Height;
-			text = PrepareText($"КПБ \"{ specs.Name }\" { specs.Size }", "Calibri", 24);
+			text = PrepareText($"КПБ \"{ contentSpecs.Name }\" { contentSpecs.Size }", "Calibri", 24);
 			DrawText(group, text, 0.0, yOffset);
 
 			yOffset += text.Height;
@@ -91,21 +101,21 @@ namespace LabelBuilder
 			DrawText(group, text, 0.0, yOffset);
 
 			text = PrepareText("180 x 200", "Calibri", 24);
-			DrawText(group, text, 200.0, yOffset);
+			DrawText(group, text, FormatSpecs.SizesOffset, yOffset);
 
 			yOffset += text.Height;
 			text = PrepareText("Простынь:", "Calibri", 24);
 			DrawText(group, text, 0.0, yOffset);
 
 			text = PrepareText("220 x 220", "Calibri", 24);
-			DrawText(group, text, 200.0, yOffset);
+			DrawText(group, text, FormatSpecs.SizesOffset, yOffset);
 
 			yOffset += text.Height;
 			text = PrepareText("Наволочки:", "Calibri", 24);
 			DrawText(group, text, 0.0, yOffset);
 
 			text = PrepareText("70 x 70 - 2 шт.", "Calibri", 24);
-			DrawText(group, text, 200.0, yOffset);
+			DrawText(group, text, FormatSpecs.SizesOffset, yOffset);
 
 			yOffset += text.Height;
 			text = PrepareText("Ткань: бязь премиум", "Calibri", 24);
@@ -115,45 +125,37 @@ namespace LabelBuilder
 			text = PrepareText("Цена: 2800 руб.", "Calibri", 24);
 			DrawText(group, text, 0.0, yOffset);
 
-			EndDraw(group, bitmap);
-				
-			BitmapSpecsPairs.Add(new BitmapSpecsPair { Specs = specs, Bitmap = bitmap });
+			RenderTargetBitmap bitmap = new RenderTargetBitmap(550, (int)yOffset, 96, 96, PixelFormats.Pbgra32);
 
-			using (var stream = new FileStream(@"C:/repos/result.png", FileMode.Create))
-			{
-				BitmapEncoder encoder = new PngBitmapEncoder();
-				encoder.Frames.Add(BitmapFrame.Create(bitmap));
-				encoder.Save(stream);
-			}
+			var visual = EndDraw(group);
 
-			SaveResult();
+			BitmapSpecsPairs.Add(new BitmapSpecsPair { Specs = contentSpecs, Bitmap = visual });
 		}
 
-		public void SaveResult()
+		public DrawingVisual SaveResult()
 		{
-			RenderTargetBitmap merged = new RenderTargetBitmap(550, 600, 96.0, 96.0, PixelFormats.Pbgra32);
+			double height = 0.0;
+			double width = BitmapSpecsPairs[0].Bitmap.ContentBounds.Width + FormatSpecs.Margin * 2;
+
+			foreach (var pair in BitmapSpecsPairs)
+				height += pair.Bitmap.ContentBounds.Height + FormatSpecs.Margin * 2;
+
+			DrawingVisual merged = new DrawingVisual();
 
 			double y = 0.0;
-			foreach (var pair in BitmapSpecsPairs)
+			using (var dc = merged.RenderOpen())
 			{
-				var visual = new DrawingVisual();
-
-				using (var dc = visual.RenderOpen())
+				foreach (var pair in BitmapSpecsPairs)
 				{
-					var visualBrush = new ImageBrush(pair.Bitmap);
-					var elementSize = new Size(pair.Bitmap.Width, pair.Bitmap.Height);
-					dc.DrawRectangle(visualBrush, null, new Rect(new Point(0.0, y), elementSize));
-					y += pair.Bitmap.Height;
+					y += FormatSpecs.Margin;
+					var visualBrush = new VisualBrush(pair.Bitmap);
+					var elementSize = new Size(pair.Bitmap.ContentBounds.Width, pair.Bitmap.ContentBounds.Height);
+					dc.DrawRectangle(visualBrush, null, new Rect(new Point(FormatSpecs.Margin, y), elementSize));
+					y += pair.Bitmap.ContentBounds.Height + FormatSpecs.Margin;
 				}
-				merged.Render(visual);
 			}
 
-			using (var stream = new FileStream(@"C:/repos/merged.png", FileMode.Create))
-			{
-				BitmapEncoder encoder = new PngBitmapEncoder();
-				encoder.Frames.Add(BitmapFrame.Create(merged));
-				encoder.Save(stream);
-			}
+			return merged;
 		}
 	}
 }
