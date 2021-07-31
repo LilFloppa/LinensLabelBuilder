@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -13,32 +10,26 @@ namespace LabelBuilder
 {
 	public class ContentSpecs
 	{
-		public string Name;
-		public string Size;
-		public (int, int) DuvetCoverSize;
-		public (int, int) BedsheetSize;
-		public (int, int) PillowcaseSize;
-		public string ClothName;
-		public int Price;
+		public string Name { get; set; }
+		public string Size { get; set; }
+		public (int, int) DuvetCoverSize { get; set; }
+		public (int, int) BedsheetSize { get; set; }
+		public (int, int) PillowcaseSize { get; set; }
+		public string ClothName { get; set; }
+		public int Price { get; set; }
 	}
 
-	public class FontSpecs
+	public class BitmapSpecsPair
 	{
-		public string FontName;
-		public int FontSize;
-	}
-
-	public class ImageSpecs
-	{
-		public int Width;
-		public int Height;
+		public RenderTargetBitmap Bitmap { get; set; }
+		public ContentSpecs Specs { get; set; }
 	}
 
 	public class Model
 	{
 		public MainWindow Window { get; set; }
 
-		private List<RenderTargetBitmap> bitmaps = new();
+		public ObservableCollection<BitmapSpecsPair> BitmapSpecsPairs = new();
 
 		public Model(MainWindow window)
 		{
@@ -125,9 +116,8 @@ namespace LabelBuilder
 			DrawText(group, text, 0.0, yOffset);
 
 			EndDraw(group, bitmap);
-
-			bitmaps.Add(bitmap);
-			bitmaps.Add(bitmap);
+				
+			BitmapSpecsPairs.Add(new BitmapSpecsPair { Specs = specs, Bitmap = bitmap });
 
 			using (var stream = new FileStream(@"C:/repos/result.png", FileMode.Create))
 			{
@@ -144,16 +134,16 @@ namespace LabelBuilder
 			RenderTargetBitmap merged = new RenderTargetBitmap(550, 600, 96.0, 96.0, PixelFormats.Pbgra32);
 
 			double y = 0.0;
-			foreach (var bitmap in bitmaps)
+			foreach (var pair in BitmapSpecsPairs)
 			{
 				var visual = new DrawingVisual();
 
 				using (var dc = visual.RenderOpen())
 				{
-					var visualBrush = new ImageBrush(bitmap);
-					var elementSize = new Size(bitmap.Width, bitmap.Height);
+					var visualBrush = new ImageBrush(pair.Bitmap);
+					var elementSize = new Size(pair.Bitmap.Width, pair.Bitmap.Height);
 					dc.DrawRectangle(visualBrush, null, new Rect(new Point(0.0, y), elementSize));
-					y += bitmap.Height;
+					y += pair.Bitmap.Height;
 				}
 				merged.Render(visual);
 			}
