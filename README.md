@@ -1,4 +1,5 @@
-# Linens Label Builder
+<img src="https://user-images.githubusercontent.com/44492725/127859023-05c935d0-1c01-41c3-bc1d-ba13920b454f.png" alt="[logo]" width="48"/> Linens Label Builder
+=======================
 
 ## Description
 Small application that can bulid labels for linens. Labels contain name of product, sizes, cloth name and price. Optionally, can contain sizes for bedsheets on elastic.
