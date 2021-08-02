@@ -103,7 +103,7 @@ namespace LabelBuilder.Models
 				text = PrepareText("Простынь на резинке:", "Calibri", FormatSpecs.FontSize);
 				DrawText(group, text, 0.0, yOffset);
 
-				text = PrepareText($"{ contentSpec.ElasticBedsheetWidth } x 200", "Calibri", FormatSpecs.FontSize);
+				text = PrepareText($"{ contentSpec.ElasticBedsheetWidth } x 200 x 38", "Calibri", FormatSpecs.FontSize);
 				DrawText(group, text, FormatSpecs.SizesOffset, yOffset);
 			}
 			else

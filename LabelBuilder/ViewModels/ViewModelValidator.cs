@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using LabelBuilder.Extensions;
 
 namespace LabelBuilder.ViewModels
 {
@@ -9,10 +10,8 @@ namespace LabelBuilder.ViewModels
 			RuleFor(vm => vm.Name).NotEmpty();
 			RuleFor(vm => vm.Size).NotEmpty();
 			RuleFor(vm => vm.ClothName).NotEmpty();
-			RuleFor(vm => vm.Price).Must(IsNumber);
-			RuleFor(vm => vm.ElasticBedsheetWidth).Must(IsNumber).When(vm => vm.HasElasticBedsheet);
+			RuleFor(vm => vm.Price).Must(price => price.IsInt32());
+			RuleFor(vm => vm.ElasticBedsheetWidth).Must(width => width.IsInt32()).When(vm => vm.HasElasticBedsheet);
 		}
-
-		private bool IsNumber(string number) => int.TryParse(number, out _);
 	}
 }

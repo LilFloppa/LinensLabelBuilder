@@ -5,9 +5,9 @@ namespace LabelBuilder
 	/// <summary>
 	/// Логика взаимодействия для FormatWindow.xaml
 	/// </summary>
-	public partial class FormatWindow : Window
+	public partial class FormatParametersWindow : Window
 	{
-		public FormatWindow()
+		public FormatParametersWindow()
 		{
 			InitializeComponent();
 		}

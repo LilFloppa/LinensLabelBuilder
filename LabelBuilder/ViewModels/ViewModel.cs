@@ -10,12 +10,9 @@ using LabelBuilder.Models;
 
 namespace LabelBuilder.ViewModels
 {
-
 	class ViewModel : ReactiveObject
 	{
 		public Model Model { get; set; }
-
-		public FormatViewModel FormatViewModel { get; set; }
 
 		public ObservableCollection<ContentSpec> ContentSpecs { get; set; }
 
@@ -60,21 +57,16 @@ namespace LabelBuilder.ViewModels
 		public ViewModel(MainWindow window)
 		{
 			Model = new Model(window);
-			FormatViewModel = new FormatViewModel(this);
 			ContentSpecs = Model.ContentSpecs;
 
-			IObservable<bool> addSpecCanExecute = this.WhenAnyValue(
+			var addSpecCanExecute = this.WhenAnyValue(
 				vm => vm.Name,
 				vm => vm.Size,
 				vm => vm.HasElasticBedsheet,
 				vm => vm.ElasticBedsheetWidth,
 				vm => vm.ClothName,
 				vm => vm.Price,
-				(name, size, elastic, elasticWidth, cloth, price) =>
-				{
-					var result = validator.Validate(this);
-					return result.IsValid;
-				});
+				(name, size, elastic, elasticWidth, cloth, price) => validator.Validate(this).IsValid);
 
 			AddSpec = ReactiveCommand.Create(() => Model.ContentSpecs.Add(CurrentContentSpec), addSpecCanExecute);
 
@@ -96,10 +88,11 @@ namespace LabelBuilder.ViewModels
 
 			Format = ReactiveCommand.Create(() =>
 			{
-				FormatWindow formatWindow = new FormatWindow();
-				formatWindow.DataContext = FormatViewModel;
+				FormatParametersWindow formatWindow = new FormatParametersWindow();
+				var vm = new FormatParametersViewModel(this);
+				formatWindow.DataContext = vm;
 				formatWindow.Show();
-				FormatViewModel.SetSpecs.Subscribe(_ => formatWindow.Close());
+				vm.SetSpecs.Subscribe(_ => formatWindow.Close());			
 			});
 
 			Print = ReactiveCommand.Create(() =>
@@ -118,13 +111,16 @@ namespace LabelBuilder.ViewModels
 
 	class FormatParametersViewModel : ReactiveObject
 	{
+		FormatParametersValidator validator = new();
+
 		public FormatParametersViewModel(ViewModel parent)
 		{
 			var setSpecsCanExecute = this.WhenAnyValue(
 				vm => vm.FontSize,
 				vm => vm.Margin,
 				vm => vm.SizesOffset,
-				(fontSize, margin, offset) => ValidateField(fontSize) && ValidateField(margin) && ValidateField(offset));
+				(fontSize, margin, offset) => validator.Validate(this).IsValid);
+
 			SetSpecs = ReactiveCommand.Create(() =>
 			{
 				parent.Model.FormatSpecs = new FormatSpecs { FontSize = int.Parse(FontSize), Margin = int.Parse(Margin), SizesOffset = int.Parse(SizesOffset) };

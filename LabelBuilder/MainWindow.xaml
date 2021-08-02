@@ -3,11 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LabelBuilder"
         xmlns:models="clr-namespace:LabelBuilder.Models"
         xmlns:converters="clr-namespace:LabelBuilder.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="800">
+        Title="Строитель этикеток" Height="550" Width="800">
     <Window.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:IntToStringConverter x:Key="IntToStringConverter" />
@@ -39,10 +38,10 @@
                     <TextBlock Grid.Row="2" Grid.Column="1" FontSize="16" 
                                Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource BooleanToVisibilityConverter }}" >
                     <Run Text="{ Binding ElasticBedsheetWidth }" />
-                        <Run Text=" x 200" />
+                       <Run Text="x 200 x 38" />
                     </TextBlock>
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{ Binding ClothName }" FontSize="16"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{ Binding Price, Converter={ StaticResource IntToStringConverter }}" FontSize="16"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{ Binding Price }" FontSize="16"/>
                 </Grid>
             </Border>
         </DataTemplate>
