@@ -11,7 +11,7 @@ namespace LabelBuilder
 		public MainWindow()
 		{
 			InitializeComponent();
-			DataContext = new ViewModel(this);
+			DataContext = new MainViewModel(this);
 		}
 	}
 }

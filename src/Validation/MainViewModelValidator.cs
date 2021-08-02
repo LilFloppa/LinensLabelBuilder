@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using LabelBuilder.Extensions;
+using LabelBuilder.ViewModels;
 
-namespace LabelBuilder.ViewModels
+namespace LabelBuilder.Validation
 {
-	class ViewModelValidator : AbstractValidator<ViewModel>
+	class MainViewModelValidator : AbstractValidator<MainViewModel>
 	{
-		public ViewModelValidator()
+		public MainViewModelValidator()
 		{
 			RuleFor(vm => vm.Name).NotEmpty();
 			RuleFor(vm => vm.Size).NotEmpty();

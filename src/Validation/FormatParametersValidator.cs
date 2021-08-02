@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using LabelBuilder.Extensions;
+using LabelBuilder.ViewModels;
 
-namespace LabelBuilder.ViewModels
+namespace LabelBuilder.Validation
 {
 	class FormatParametersValidator : AbstractValidator<FormatParametersViewModel>
 	{
