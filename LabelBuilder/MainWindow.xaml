@@ -86,10 +86,9 @@
 
                     <TextBlock x:Name="ElasticBedsheetWidthLabel" Text="Ширина простыни на резинке" FontSize="20" 
                                Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BooleanToVisibilityConverter } }"/>
-                    <ComboBox x:Name ="ElasticBedsheetWidthComboBox" Margin="0,0,0,10" MinHeight="30" 
-                              ItemsSource="{ x:Static models:SizesHelper.ElasticBedsheetWidth }" 
-                              SelectedItem="{ Binding ElasticBedsheetWidth, Mode=TwoWay }" 
-                              Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BooleanToVisibilityConverter } }" />
+                    <TextBox MinHeight="30" 
+                             Text="{ Binding ElasticBedsheetWidth, UpdateSourceTrigger=PropertyChanged }"
+                             Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BooleanToVisibilityConverter } }" />
 
                     <TextBlock Text="Ткань" FontSize="20" />
                     <TextBox Margin="0,0,0,10" MinHeight="30" Text="{ Binding ClothName, UpdateSourceTrigger=PropertyChanged }"/>

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using LabelBuilder.ViewModels;
+using System.Windows;
 
 namespace LabelBuilder
 {
