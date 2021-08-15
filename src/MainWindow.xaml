@@ -6,9 +6,10 @@
         xmlns:models="clr-namespace:LabelBuilder.Models"
         xmlns:converters="clr-namespace:LabelBuilder.Converters"
         mc:Ignorable="d"
-        Title="Строитель этикеток" Height="550" Width="800">
+        Title="Строитель этикеток" Height="750" Width="1000">
     <Window.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
 
         <DataTemplate x:Key="ContentSpecTemplate" DataType="{x:Type models:ContentSpec}">
             <Border BorderThickness="1 1 1 1" BorderBrush="Black" Margin="0,2,0,2" Padding="5,1,5,1">
@@ -23,24 +24,63 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Название: " FontSize="16" />
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Размер: " FontSize="16"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Простынь на резинке: " FontSize="16"
-                               Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource BooleanToVisibilityConverter }}" />
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Ткань: " FontSize="16"/>
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Цена: " FontSize="16"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Пододеяльник: " FontSize="16" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Простынь: " FontSize="16" 
+                               Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource InverseBoolToVisibilityConverter }}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Простынь на резинке: " FontSize="16"
+                               Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource BoolToVisibilityConverter }}" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Наволочки: " FontSize="16" />
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Ткань: " FontSize="16"/>
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Цена: " FontSize="16"/>
 
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="{ Binding Name }" FontSize="16"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{ Binding Size }" FontSize="16"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" FontSize="16" 
-                               Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource BooleanToVisibilityConverter }}" >
-                    <Run Text="{ Binding ElasticBedsheetWidth }" />
-                       <Run Text="x 200 x 38" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" FontSize="16">
+                        <Run Text="{ Binding SizeSpecs.DuvetCoverWidth }" />
+                        <Run Text=" x "/>
+                        <Run Text="{ Binding SizeSpecs.DuvetCoverHeight }" />
+                        <Run Text=" - "/>
+                        <Run Text="{ Binding SizeSpecs.DuvetCoverCount }" />
+                        <Run Text=" шт." />
                     </TextBlock>
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{ Binding ClothName }" FontSize="16"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{ Binding Price }" FontSize="16"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="1" FontSize="16" 
+                               Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource InverseBoolToVisibilityConverter }}">
+                        <Run Text="{ Binding SizeSpecs.BedsheetWidth }" />
+                        <Run Text=" x "/>
+                        <Run Text="{ Binding SizeSpecs.BedsheetHeight }" />
+                        <Run Text=" - "/>
+                        <Run Text="{ Binding SizeSpecs.BedsheetCount }" />
+                        <Run Text=" шт." />
+                    </TextBlock>
+
+                    <TextBlock Grid.Row="3" Grid.Column="1" FontSize="16" 
+                                   Visibility="{ Binding HasElasticBedsheet, Converter={ StaticResource BoolToVisibilityConverter }}" >
+                        <Run Text="{ Binding ElasticBedsheetWidth }" />
+                        <Run Text="x 200 x 38 - " />
+                        <Run Text="{ Binding SizeSpecs.BedsheetCount }" />
+                        <Run Text=" шт." />
+                    </TextBlock>
+
+                    <TextBlock Grid.Row="4" Grid.Column="1" FontSize="16">
+                        <Run Text="{ Binding SizeSpecs.PillowcaseWidth }" />
+                        <Run Text=" x "/>
+                        <Run Text="{ Binding SizeSpecs.PillowcaseHeight }" />
+                        <Run Text=" - "/>
+                        <Run Text="{ Binding SizeSpecs.PillowcaseCount }" />
+                        <Run Text=" шт." />
+                    </TextBlock>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{ Binding ClothName }" FontSize="16"/>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{ Binding Price }" FontSize="16"/>
                 </Grid>
             </Border>
         </DataTemplate>
@@ -74,19 +114,74 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="Простынь на резинке:" Margin="0,0,10,0"/>
-                        <CheckBox x:Name="HasElasticBedsheetCheckBox" Grid.Column="1" IsChecked="{ Binding HasElasticBedsheet }" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <TextBlock Grid.Column="0" Text="Особые размеры: " Margin="0,0,10,0"/>
+                        <CheckBox x:Name="HasCustomSize" Grid.Column="1" IsChecked="{ Binding HasCustomSize }" VerticalAlignment="Center">
                             <CheckBox.LayoutTransform>
                                 <ScaleTransform ScaleX="2" ScaleY="2" />
                             </CheckBox.LayoutTransform>
                         </CheckBox>
                     </Grid>
 
-                    <TextBlock x:Name="ElasticBedsheetWidthLabel" Text="Ширина простыни на резинке" FontSize="20" 
-                               Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BooleanToVisibilityConverter } }"/>
-                    <TextBox MinHeight="30" 
-                             Text="{ Binding ElasticBedsheetWidth, UpdateSourceTrigger=PropertyChanged }"
-                             Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BooleanToVisibilityConverter } }" />
+                    <Grid Margin="0,0,0,10" Visibility="{ Binding ElementName=HasCustomSize, Path=IsChecked, Converter={ StaticResource BoolToVisibilityConverter } }">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Пододеяльник: "/>
+                        <TextBox Grid.Row="0" Grid.Column="1" MinWidth="40" MinHeight="30" Text="{ Binding DuvetCoverWidth, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="  x  "/>
+                        <TextBox Grid.Row="0" Grid.Column="3" MinWidth="40" MinHeight="30" Text="{ Binding DuvetCoverHeight, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="0" Grid.Column="4" Text="  —  "/>
+                        <TextBox Grid.Row="0" Grid.Column="5" MinWidth="40" MinHeight="30" Text="{ Binding DuvetCoverCount, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="0" Grid.Column="7" Text=" шт."/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Простынь: "/>
+                        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="40" MinHeight="30" Text="{ Binding BedsheetWidth, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="  x  "/>
+                        <TextBox Grid.Row="1" Grid.Column="3" MinWidth="40" MinHeight="30" Text="{ Binding BedsheetHeight, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="1" Grid.Column="4" Text="  —  "/>
+                        <TextBox Grid.Row="1" Grid.Column="5" MinWidth="40" MinHeight="30" Text="{ Binding BedsheetCount, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="1" Grid.Column="7" Text=" шт."/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Наволочки: "/>
+                        <TextBox Grid.Row="2" Grid.Column="1" MinWidth="40" MinHeight="30" Text="{ Binding PillowcaseWidth, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="  x  "/>
+                        <TextBox Grid.Row="2" Grid.Column="3" MinWidth="40" MinHeight="30" Text="{ Binding PillowcaseHeight, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="2" Grid.Column="4" Text="  —  "/>
+                        <TextBox Grid.Row="2" Grid.Column="5" MinWidth="40" MinHeight="30" Text="{ Binding PillowcaseCount, UpdateSourceTrigger=PropertyChanged }"/>
+                        <TextBlock Grid.Row="2" Grid.Column="7" Text=" шт."/>
+
+                    </Grid>
+
+                    <Grid Margin="0,0,0,10" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="Простынь на резинке:" Margin="0,0,10,0"/>
+                        <CheckBox x:Name="HasElasticBedsheetCheckBox" Grid.Column="1" IsChecked="{ Binding HasElasticBedsheet }" VerticalAlignment="Center">
+                            <CheckBox.LayoutTransform>
+                                <ScaleTransform ScaleX="2" ScaleY="2" />
+                            </CheckBox.LayoutTransform>
+                        </CheckBox>
+                    </Grid>
+
+                    <StackPanel Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BoolToVisibilityConverter } }">
+                        <TextBlock Text="Ширина простыни на резинке" FontSize="20" />
+                        <TextBox MinHeight="30" Text="{ Binding ElasticBedsheetWidth, UpdateSourceTrigger=PropertyChanged }" Margin="0,0,0,10"/>
+                    </StackPanel>
 
                     <TextBlock Text="Ткань" FontSize="20" />
                     <TextBox Margin="0,0,0,10" MinHeight="30" Text="{ Binding ClothName, UpdateSourceTrigger=PropertyChanged }"/>

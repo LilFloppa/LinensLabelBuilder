@@ -6,13 +6,16 @@ namespace LabelBuilder.Models
 {
 	public class LinenSpecs : ReactiveObject
 	{
-		public (int width, int height) DuvetCoverSize;
-		public (int width, int height) BedsheetSize;
-		public (int width, int height) PillowcaseSize;
+		public int DuvetCoverWidth { get; set; }
+		public int DuvetCoverHeight { get; set; }
+		public int BedsheetWidth { get; set; }
+		public int BedsheetHeight { get; set; }
+		public int PillowcaseWidth { get; set; }
+		public int PillowcaseHeight { get; set; }
 
-		public int DuvetCoverCount = 1;
-		public int BedsheetCount = 1;
-		public int PillowcaseCount = 2;
+		public int DuvetCoverCount { get; set; } = 1;
+		public int BedsheetCount { get; set; } = 1;
+		public int PillowcaseCount { get; set; } = 2;
 	}
 
 	public static class SizesHelper
@@ -30,13 +33,34 @@ namespace LabelBuilder.Models
 			switch (bedSize)
 			{
 				case "2-спальный": 
-					return new LinenSpecs { DuvetCoverSize = (180, 200), BedsheetSize = (220, 220), PillowcaseSize = (70, 70) };
+					return new LinenSpecs 
+					{ 
+						DuvetCoverWidth = 180, DuvetCoverHeight = 200, 
+						BedsheetWidth = 220, BedsheetHeight = 220, 
+						PillowcaseWidth = 70, PillowcaseHeight = 70 
+					};
 				case "1.5-спальный": 
-					return new LinenSpecs { DuvetCoverSize = (150, 200), BedsheetSize = (150, 220), PillowcaseSize = (70, 70) };
+					return new LinenSpecs 
+					{ 
+						DuvetCoverWidth = 150, DuvetCoverHeight = 200,
+						BedsheetWidth = 150, BedsheetHeight = 220,
+						PillowcaseWidth = 70, PillowcaseHeight = 70
+					};
 				case "евро 1": 
-					return new LinenSpecs { DuvetCoverSize = (200, 220), BedsheetSize = (240, 220), PillowcaseSize = (70, 70) };
+					return new LinenSpecs 
+					{
+						DuvetCoverWidth = 200, DuvetCoverHeight = 220,
+						BedsheetWidth = 240, BedsheetHeight = 220,
+						PillowcaseWidth = 70, PillowcaseHeight = 70
+					};
 				case "семейный": 
-					return new LinenSpecs { DuvetCoverSize = (150, 200), BedsheetSize = (220, 220), PillowcaseSize = (70, 70), DuvetCoverCount = 2 };
+					return new LinenSpecs 
+					{
+						DuvetCoverWidth = 150, DuvetCoverHeight = 200,
+						BedsheetWidth = 220, BedsheetHeight = 220,
+						PillowcaseWidth = 70, PillowcaseHeight = 70,
+						DuvetCoverCount = 2 
+					};
 				default:
 					throw new ArgumentException("Unknown bed size");
 			};

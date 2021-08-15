@@ -10,10 +10,7 @@ namespace LabelBuilder.Models
 	{
 		public string Name { get; set; }
 		public string Size { get; set; }
-
-		public bool HasCustomSize { get; set; }
-		public LinenSpecs CustomSizeSpecs { get; set; }
-
+		public LinenSpecs SizeSpecs { get; set; }
 		public string ClothName { get; set; }
 		public string Price { get; set; }
 
@@ -86,9 +83,9 @@ namespace LabelBuilder.Models
 			return MergeImages(images);
 		}
 
-	   DrawingVisual BuildImage(ContentSpec contentSpec)
+		DrawingVisual BuildImage(ContentSpec contentSpec)
 		{
-			LinenSpecs linenSpecs = contentSpec.HasCustomSize ? contentSpec.CustomSizeSpecs : SizesHelper.GetLinenSpecs(contentSpec.Size);
+			LinenSpecs linenSpecs = contentSpec.SizeSpecs;
 
 			GeometryGroup group = BeginDraw();
 
@@ -101,36 +98,51 @@ namespace LabelBuilder.Models
 
 			drawn = DrawText(group, $"КПБ \"{ contentSpec.Name }\" { contentSpec.Size }", 0.0, yOffset);
 
-			if (contentSpec.HasElasticBedsheet)
+			if (linenSpecs.BedsheetCount > 0)
 			{
-				yOffset += drawn.Height;
-				drawn = DrawText(group, "Простынь на резинке:", 0.0, yOffset);
-				drawn = DrawText(group, $"{ contentSpec.ElasticBedsheetWidth } x 200 x 38", FormatSpecs.SizesOffset, yOffset);
+				string bedsheetLine = "";
+				if (contentSpec.HasElasticBedsheet)
+				{
+					yOffset += drawn.Height;
+					drawn = DrawText(group, "Простынь на резинке:", 0.0, yOffset);
+					bedsheetLine = $"{ contentSpec.ElasticBedsheetWidth } x 200 x 38";			
+				}
+				else
+				{
+					yOffset += drawn.Height;
+					drawn = DrawText(group, "Простынь:", 0.0, yOffset);
+					bedsheetLine = $"{ linenSpecs.BedsheetWidth } x { linenSpecs.BedsheetHeight }";
+				}
+
+				if (linenSpecs.BedsheetCount > 1)
+					bedsheetLine += $" - { linenSpecs.BedsheetCount } шт.";
+
+				drawn = DrawText(group, bedsheetLine, FormatSpecs.SizesOffset, yOffset);
 			}
-			else
+
+			if (linenSpecs.DuvetCoverCount > 0)
 			{
 				yOffset += drawn.Height;
 				drawn = DrawText(group, "Пододеяльник:", 0.0, yOffset);
 
-				string duvetLine = $"{ linenSpecs.DuvetCoverSize.width } x { linenSpecs.DuvetCoverSize.height }";
+				string duvetLine = $"{ linenSpecs.DuvetCoverWidth } x { linenSpecs.DuvetCoverHeight }";
 				if (linenSpecs.DuvetCoverCount > 1)
 					duvetLine += $" - { linenSpecs.DuvetCoverCount } шт.";
 
 				drawn = DrawText(group, duvetLine, FormatSpecs.SizesOffset, yOffset);
-
-				yOffset += drawn.Height;
-				drawn = DrawText(group, "Простынь:", 0.0, yOffset);
-				drawn = DrawText(group, $"{ linenSpecs.BedsheetSize.width } x { linenSpecs.BedsheetSize.height }", FormatSpecs.SizesOffset, yOffset);
 			}
 
-			yOffset += drawn.Height;
-			drawn = DrawText(group, "Наволочки:", 0.0, yOffset);
+			if (linenSpecs.PillowcaseCount > 0)
+			{
+				yOffset += drawn.Height;
+				drawn = DrawText(group, "Наволочки:", 0.0, yOffset);
 
-			string pillowLine = $"{ linenSpecs.PillowcaseSize.width } x { linenSpecs.PillowcaseSize.height }";
-			if (linenSpecs.PillowcaseCount > 1)
-				pillowLine += $" - { linenSpecs.PillowcaseCount } шт.";
+				string pillowLine = $"{ linenSpecs.PillowcaseWidth } x { linenSpecs.PillowcaseHeight }";
+				if (linenSpecs.PillowcaseCount > 1)
+					pillowLine += $" - { linenSpecs.PillowcaseCount } шт.";
 
-			drawn = DrawText(group, pillowLine, FormatSpecs.SizesOffset, yOffset);
+				drawn = DrawText(group, pillowLine, FormatSpecs.SizesOffset, yOffset);
+			}
 
 			yOffset += drawn.Height;
 			drawn = DrawText(group, $"Ткань: { contentSpec.ClothName }", 0.0, yOffset);
