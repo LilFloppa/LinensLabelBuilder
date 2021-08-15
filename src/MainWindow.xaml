@@ -164,10 +164,15 @@
                         </CheckBox>
                     </Grid>
 
-                    <StackPanel Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BoolToVisibilityConverter } }">
-                        <TextBlock Text="Ширина простыни на резинке" FontSize="20" />
-                        <TextBox MinHeight="30" Text="{ Binding ElasticBedsheetWidth, UpdateSourceTrigger=PropertyChanged }" Margin="0,0,0,10"/>
-                    </StackPanel>
+                    <Grid Margin="0,0,0,10" Visibility="{ Binding ElementName=HasElasticBedsheetCheckBox, Path=IsChecked, Converter={ StaticResource BoolToVisibilityConverter } }">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="Ширина простыни на резинке: " FontSize="20" />
+                        <TextBox Grid.Column="1" MinWidth="" MinHeight="30" Text="{ Binding ElasticBedsheetWidth, UpdateSourceTrigger=PropertyChanged }" />
+                    </Grid>
 
                     <TextBlock Text="Ткань" FontSize="20" />
                     <TextBox Margin="0,0,0,10" MinHeight="30" Text="{ Binding ClothName, UpdateSourceTrigger=PropertyChanged }"/>
