@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
 using System.Collections.Generic;
 
 namespace LabelBuilder.Models
 {
-	public class LinenSpecs
+	public class LinenSpecs : ReactiveObject
 	{
 		public (int width, int height) DuvetCoverSize;
 		public (int width, int height) BedsheetSize;
@@ -16,8 +17,6 @@ namespace LabelBuilder.Models
 
 	public static class SizesHelper
 	{
-		public static IEnumerable<string> ElasticBedsheetWidth { get; set; } = new List<string>() { "100", "140", "160", "180" };
-
 		public static IEnumerable<string> BedSizes { get; set; } = new List<string>()
 		{
 			"2-спальный",
