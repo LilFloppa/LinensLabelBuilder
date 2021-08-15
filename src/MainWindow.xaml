@@ -108,21 +108,7 @@
                     <TextBlock Text="Размер" FontSize="20" />
                     <ComboBox Margin="0,0,0,10" MinHeight="30" ItemsSource="{ x:Static models:SizesHelper.BedSizes }" SelectedItem="{ Binding Size }"/>
 
-                    <Grid Margin="0,0,0,10" HorizontalAlignment="Left">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="Особые размеры: " Margin="0,0,10,0"/>
-                        <CheckBox x:Name="HasCustomSize" Grid.Column="1" IsChecked="{ Binding HasCustomSize }" VerticalAlignment="Center">
-                            <CheckBox.LayoutTransform>
-                                <ScaleTransform ScaleX="2" ScaleY="2" />
-                            </CheckBox.LayoutTransform>
-                        </CheckBox>
-                    </Grid>
-
-                    <Grid Margin="0,0,0,10" Visibility="{ Binding ElementName=HasCustomSize, Path=IsChecked, Converter={ StaticResource BoolToVisibilityConverter } }">
+                    <Grid Margin="0,0,0,10" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition Width="auto" />

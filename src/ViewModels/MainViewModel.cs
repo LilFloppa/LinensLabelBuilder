@@ -24,9 +24,6 @@ namespace LabelBuilder.ViewModels
 		public string Size { get => _size; set { this.RaiseAndSetIfChanged(ref _size, value); SetSizes(); Validate(); } }
 		private string _size = "";
 
-		public bool HasCustomSize { get => _hasCustomSize; set { this.RaiseAndSetIfChanged(ref _hasCustomSize, value); Validate(); } }
-		private bool _hasCustomSize = false;
-
 		public string ClothName { get => _clothName; set { this.RaiseAndSetIfChanged(ref _clothName, value); Validate(); } }
 		private string _clothName = "";
 
@@ -34,7 +31,7 @@ namespace LabelBuilder.ViewModels
 		private string _price = "";
 		#endregion
 
-		#region Custom Sizes
+		#region Sizes
 		public string DuvetCoverWidth { get => _duvetCoverWidth; set { this.RaiseAndSetIfChanged(ref _duvetCoverWidth, value); Validate(); } }
 		private string _duvetCoverWidth = "";
 
@@ -105,25 +102,19 @@ namespace LabelBuilder.ViewModels
 				ElasticBedsheetWidth = ElasticBedsheetWidth
 			};
 
-			if (HasCustomSize)
+			spec.SizeSpecs = new LinenSpecs()
 			{
-				spec.SizeSpecs = new LinenSpecs()
-				{
-					DuvetCoverWidth = int.Parse(DuvetCoverWidth),
-					DuvetCoverHeight = int.Parse(DuvetCoverHeight),
-					BedsheetWidth = int.Parse(BedsheetWidth),
-					BedsheetHeight = int.Parse(BedsheetHeight),
-					PillowcaseWidth = int.Parse(PillowcaseWidth), 
-					PillowcaseHeight = int.Parse(PillowcaseHeight),
-					DuvetCoverCount = int.Parse(DuvetCoverCount),
-					BedsheetCount = int.Parse(BedsheetCount),
-					PillowcaseCount = int.Parse(PillowcaseCount)
-				};
-			}
-			else
-			{
-				spec.SizeSpecs = SizesHelper.GetLinenSpecs(Size);
-			}
+				DuvetCoverWidth = int.Parse(DuvetCoverWidth),
+				DuvetCoverHeight = int.Parse(DuvetCoverHeight),
+				BedsheetWidth = int.Parse(BedsheetWidth),
+				BedsheetHeight = int.Parse(BedsheetHeight),
+				PillowcaseWidth = int.Parse(PillowcaseWidth),
+				PillowcaseHeight = int.Parse(PillowcaseHeight),
+				DuvetCoverCount = int.Parse(DuvetCoverCount),
+				BedsheetCount = int.Parse(BedsheetCount),
+				PillowcaseCount = int.Parse(PillowcaseCount)
+			};
+
 
 			return spec;
 		}
