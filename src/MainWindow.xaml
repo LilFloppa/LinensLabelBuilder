@@ -171,7 +171,7 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Ширина простыни на резинке: " FontSize="20" />
-                        <TextBox Grid.Column="1" MinWidth="" MinHeight="30" Text="{ Binding ElasticBedsheetWidth, UpdateSourceTrigger=PropertyChanged }" />
+                        <TextBox Grid.Column="1" MinHeight="30" Text="{ Binding ElasticBedsheetWidth, UpdateSourceTrigger=PropertyChanged }" />
                     </Grid>
 
                     <TextBlock Text="Ткань" FontSize="20" />
