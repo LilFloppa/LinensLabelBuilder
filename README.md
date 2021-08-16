@@ -31,7 +31,7 @@ Small application that can bulid labels for linens. Labels contain name of produ
 ## Format parameters window
 * ### Font size ("Размер шрифта")
 * ### Margin ("Размеры отступов") - margin for each label in resulting A4 sheet
-* ### Offset for sizes of linens ("Отступ для размеров белья") - offset for numeric values of linen's dimentions
+* ### Offset for sizes of linens ("Отступ для размеров белья") - offset for numeric values of linens dimensions
 ![image](https://user-images.githubusercontent.com/44492725/127857505-d9e2dab3-8d0b-47ea-8a0b-465cf9355034.png)
 
 
