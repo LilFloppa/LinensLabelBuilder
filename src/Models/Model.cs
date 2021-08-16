@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
@@ -35,7 +36,7 @@ namespace LabelBuilder.Models
 		{
 			Window = window;
 
-			FormatSpecs = new FormatSpecs { FontSize = 24, Margin = 20, SizesOffset = 240 };
+			FormatSpecs = new FormatSpecs { FontSize = 24, Margin = 10, SizesOffset = 240 };
 		}
 
 		private FormattedText PrepareText(string text, string font, int size)
@@ -64,6 +65,21 @@ namespace LabelBuilder.Models
 			return formatted;
 		}
 
+		private void DrawBorder(GeometryGroup group, double x, double y, double width, double height)
+		{
+			StreamGeometry geomerty = new StreamGeometry();
+
+			using (var context = geomerty.Open())
+			{
+				context.BeginFigure(new Point(x, y), false, true);
+				context.LineTo(new Point(x + width, y), true, false);
+				context.LineTo(new Point(x + width, y + height), true, false);
+				context.LineTo(new Point(x, y + height), true, false);
+				context.LineTo(new Point(x, y), true, false);
+			}
+			group.Children.Add(geomerty);
+		}
+
 		public DrawingVisual EndDraw(GeometryGroup group)
 		{
 			DrawingVisual visual = new();
@@ -89,28 +105,46 @@ namespace LabelBuilder.Models
 
 			GeometryGroup group = BeginDraw();
 
-			double yOffset = 0.0;
+			double margin = FormatSpecs.Margin;
+			double xOffset = 0.0;
+			double yOffset = margin;
 
-			FormattedText drawn = DrawText(group, "ИВАНОВСКИЙ ТЕКСТИЛЬ", 0.0, 0.0);
+			FormattedText drawn = DrawText(group, "ИВАНОВСКИЙ ТЕКСТИЛЬ", margin, yOffset);
 			yOffset += drawn.Height;
-			drawn = DrawText(group, "Постельное белье \"Российский хлопок\"", 0.0, yOffset);
-			yOffset += drawn.Height;
+			xOffset = Math.Max(xOffset, drawn.Width);
 
-			drawn = DrawText(group, $"КПБ \"{ contentSpec.Name }\" { contentSpec.Size }", 0.0, yOffset);
+			drawn = DrawText(group, "Постельное белье \"Российский хлопок\"", margin, yOffset);
+			yOffset += drawn.Height;
+			xOffset = Math.Max(xOffset, drawn.Width);
+
+			drawn = DrawText(group, $"КПБ \"{ contentSpec.Name }\" { contentSpec.Size }", margin, yOffset);
+			yOffset += drawn.Height;
+			xOffset = Math.Max(xOffset, drawn.Width);
+
+			if (linenSpecs.DuvetCoverCount > 0)
+			{
+				drawn = DrawText(group, "Пододеяльник:", margin, yOffset);
+
+				string duvetLine = $"{ linenSpecs.DuvetCoverWidth } x { linenSpecs.DuvetCoverHeight }";
+				if (linenSpecs.DuvetCoverCount > 1)
+					duvetLine += $" - { linenSpecs.DuvetCoverCount } шт.";
+
+				drawn = DrawText(group, duvetLine, FormatSpecs.SizesOffset, yOffset);
+				yOffset += drawn.Height;
+				xOffset = Math.Max(xOffset, drawn.Width);
+			}
 
 			if (linenSpecs.BedsheetCount > 0)
 			{
 				string bedsheetLine = "";
 				if (contentSpec.HasElasticBedsheet)
 				{
-					yOffset += drawn.Height;
-					drawn = DrawText(group, "Простынь на резинке:", 0.0, yOffset);
-					bedsheetLine = $"{ contentSpec.ElasticBedsheetWidth } x 200 x 38";			
+					drawn = DrawText(group, "Простынь на резинке:", margin, yOffset);
+					bedsheetLine = $"{ contentSpec.ElasticBedsheetWidth } x 200 x 38";
 				}
 				else
 				{
-					yOffset += drawn.Height;
-					drawn = DrawText(group, "Простынь:", 0.0, yOffset);
+					drawn = DrawText(group, "Простынь:", margin, yOffset);
 					bedsheetLine = $"{ linenSpecs.BedsheetWidth } x { linenSpecs.BedsheetHeight }";
 				}
 
@@ -118,38 +152,32 @@ namespace LabelBuilder.Models
 					bedsheetLine += $" - { linenSpecs.BedsheetCount } шт.";
 
 				drawn = DrawText(group, bedsheetLine, FormatSpecs.SizesOffset, yOffset);
-			}
-
-			if (linenSpecs.DuvetCoverCount > 0)
-			{
 				yOffset += drawn.Height;
-				drawn = DrawText(group, "Пододеяльник:", 0.0, yOffset);
-
-				string duvetLine = $"{ linenSpecs.DuvetCoverWidth } x { linenSpecs.DuvetCoverHeight }";
-				if (linenSpecs.DuvetCoverCount > 1)
-					duvetLine += $" - { linenSpecs.DuvetCoverCount } шт.";
-
-				drawn = DrawText(group, duvetLine, FormatSpecs.SizesOffset, yOffset);
+				xOffset = Math.Max(xOffset, drawn.Width);
 			}
 
 			if (linenSpecs.PillowcaseCount > 0)
 			{
-				yOffset += drawn.Height;
-				drawn = DrawText(group, "Наволочки:", 0.0, yOffset);
+				drawn = DrawText(group, "Наволочки:", margin, yOffset);
 
 				string pillowLine = $"{ linenSpecs.PillowcaseWidth } x { linenSpecs.PillowcaseHeight }";
 				if (linenSpecs.PillowcaseCount > 1)
 					pillowLine += $" - { linenSpecs.PillowcaseCount } шт.";
 
 				drawn = DrawText(group, pillowLine, FormatSpecs.SizesOffset, yOffset);
+				yOffset += drawn.Height;
+				xOffset = Math.Max(xOffset, drawn.Width);
 			}
 
+			drawn = DrawText(group, $"Ткань: { contentSpec.ClothName }", margin, yOffset);
 			yOffset += drawn.Height;
-			drawn = DrawText(group, $"Ткань: { contentSpec.ClothName }", 0.0, yOffset);
+			xOffset = Math.Max(xOffset, drawn.Width);
 
+			drawn = DrawText(group, $"Цена: { contentSpec.Price }руб.", margin, yOffset);
 			yOffset += drawn.Height;
-			drawn = DrawText(group, $"Цена: { contentSpec.Price }руб.", 0.0, yOffset);
+			xOffset = Math.Max(xOffset, drawn.Width);
 
+			DrawBorder(group, 0.0, 0.0, xOffset + 2 * margin, yOffset + margin);
 			DrawingVisual visual = EndDraw(group);
 
 			return visual;
