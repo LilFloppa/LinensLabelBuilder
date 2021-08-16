@@ -35,8 +35,7 @@ namespace LabelBuilder.Models
 		public Model(MainWindow window)
 		{
 			Window = window;
-
-			FormatSpecs = new FormatSpecs { FontSize = 24, Margin = 10, SizesOffset = 240 };
+			FormatSpecs = new FormatSpecs { FontSize = 24, Margin = 10, SizesOffset = 260 };
 		}
 
 		private FormattedText PrepareText(string text, string font, int size)
@@ -72,10 +71,9 @@ namespace LabelBuilder.Models
 			using (var context = geomerty.Open())
 			{
 				context.BeginFigure(new Point(x, y), false, true);
-				context.LineTo(new Point(x + width, y), true, false);
-				context.LineTo(new Point(x + width, y + height), true, false);
-				context.LineTo(new Point(x, y + height), true, false);
-				context.LineTo(new Point(x, y), true, false);
+				context.LineTo(new Point(x + width, y), true, true);
+				context.LineTo(new Point(x + width, y + height), true, true);
+				context.LineTo(new Point(x, y + height), true, true);
 			}
 			group.Children.Add(geomerty);
 		}
